@@ -1,0 +1,229 @@
+1) variables only need let on the introduction of the variable.
+    - let keyword = variable can change
+    - const keywork = variable cannot be changed.
+
+2) allowed:
+    - let userName - allowed
+    - let ageGroup5 - allowed
+    - let $kindOfSpecial - allowed
+    - let _internalValue - allowed
+
+    - let user_name - not allowed
+    - let 21Players - not allowed, can't start with a digit
+    - let user-b - no special characters, except underscore
+    - let let - not allowed, not keywords allowed.
+
+3) let currentResult; - uninitialized
+    - let currentResult = 0; - initialized 
+
+
+4) currentResult = currentResult + 10;
+    - operators - + - * / % **
+        - % modulus- divide 2 numbers, yields remainder
+        - ** exponentiation - eg 2 ** 3 = 8
+
+5) outputResult(currentResult, "");
+    - outputResult triggers a function that was defined in vendor.js
+
+
+FUNCTIONS
+
+ - Define function, function name, set parameter, returns something.
+ - Call function, use it's name, like greetUser('Max').
+    - can call as much as you want, passing in diff parameters.
+    every function execution then runs independant from (possible) other executions.
+
+- functions get pulled to the top automatically, so it's up to you where you put them.
+    - probably easier to see them if you put at the top.
+
+- You can't call a variable that's used in a function outside of the function. ex.
+    - function add(num1, num2) {
+  const addResult = num1 + num2;
+  return addResult;
+}
+
+alert(result) -> this won't work, throws error that result is not defined. 
+
+- You can use global variables (variables that exist outside of functions) inside of functions.
+
+RETURN STATEMENT
+
+- return statement ends the function execution. any code after that doesn't execute.
+
+6) Getting the plus button to work.
+    - go to vendor.js, take addBtn. 
+        - in app.js, delete currentResult = add(1, 2);
+                            console.log(currentResult);
+                            let calculationDescription = `(${defaultResult} + 10) * 3/2 -1`;
+        
+        - addBtn.addEventListener('click', add); -> this uses the function "add", just gives us the "address", or points to the function.
+                - we don't call the function here with () or params.
+
+        - change add function to
+            - function add() {
+                currentResult = currentResult + userInput.value;
+            }
+
+        - move outputResult(currentResult, calculationDescription); inside the add function.
+
+CONVERTING DATA TYPES
+
+- to convert to a number
+    - parseInt or +/parseFloat
+        - 10.1 = 10.1 / 10.1 = 10
+
+- to convert to a string, .toString.
+
+OUTPUTTING THE RESULT IN OUR FUNCTION
+
+- function add() {
+  const calcDescription = `${currentResult} + ${userInput.value}`; 
+  currentResult = currentResult + parseInt(userInput.value);
+  outputResult(currentResult, calcDescription);
+} 
+        - this builds the calcDescription, converts the currentResult and userInput.value into a string.
+        - passes calcDescription as the second input on outputResult
+
+We have code repetition here. What do we do to change it?
+
+- function add() {
+  const enteredNumber = parseInt(userInput.value);
+  const calcDescription = `${currentResult} + ${enteredNumber}`;
+  currentResult = currentResult + enteredNumber;
+  outputResult(currentResult, calcDescription);
+}
+        - this adds a const enteredNumber and sets it equal to the parseInt we had. We then change 
+            our parseInt and userInput.value to enteredNumber.
+
+- SECOND APPROACH, outsourcing to another function:
+
+- function getUserNumberInput() {
+  return parseInt(userInput.value);
+}
+
+function add() {
+  const enteredNumber = getUserNumberInput();
+  const calcDescription = `${currentResult} + ${enteredNumber}`;
+  currentResult = currentResult + enteredNumber;
+  outputResult(currentResult, calcDescription);
+}
+    - this approach creates the function getUserNumberInput, and returns the parseInt logic.
+    - It then sets enteredNumber = getUserNumberInput, which calls the logic from getUserNumberInput.
+    - This will work better when we need to use the code in multiple places. 
+
+ADDING ADDITIONAL BUTTONS
+
+- create a new function createAndWriteOutput().
+
+- take const calcDescription = `${currentResult} + ${enteredNumber}`; and
+    outputResult(currentResult, calcDescription);, and drop it into new function.
+
+- set function params function createAndWriteOutput(operator, resultBeforeCalc, calcNumber)
+
+- change const calcDescription = `${currentResult} + ${enteredNumber}`; to
+    const calcDescription = `${resultBeforeCalc} ${operator} ${calcNumber}`.
+
+- to function add, add lines 
+     const initialResult = currentResult;
+     createAndWriteOutput("+", initialResult, enteredNumber);
+
+- current state
+    function add() {
+  const enteredNumber = getUserNumberInput();
+  const initialResult = currentResult; (currentResult is global, const defaultResult = 0;, let currentResult = defaultResult;)
+  currentResult = currentResult + enteredNumber;
+  createAndWriteOutput("+", initialResult, enteredNumber);
+}
+
+- do the same for subtract, multiple, divide, switching the operator signs.
+
+- add event listeners
+    subtractBtn.addEventListener("click", subtract);
+    multiplyBtn.addEventListener("click", multiply);
+    divideBtn.addEventListener("click", divide);
+
+- this order   createAndWriteOutput("+", initialResult, enteredNumber); works because of this order
+    function createAndWriteOutput(operator, resultBeforeCalc, calcNumber)
+
+MORE operators
+ - +=, -=, *=, /=
+ 
+ - setting a new value value to current result
+    - currentResult = currentResult +1, currentResult++, or currentResult--.
+
+
+MORE core data TYPES
+ -  numbers(integer, float), strings(text)
+    - boolean - true/false - used if we have conditional code, when you only have 2 options.
+    - objects - {name: "max", age:31} - allows you to group data. key-value pair. helps w/ organization.
+    - arrays - [1,3,5] - a list of data, important for list data, unknown amounts of data. you can mix and match.
+
+
+USING arrays
+
+- add new global variable
+    - let logEntries = []; - initialized to an empty array.
+
+- in function add,
+    - logEntries.push(enteredNumber) - this pushes a new value onto logEntries array. The new val is enteredNumber.
+    - console.log(logEntries)  - this allows us to see the values being added in the console.
+    - you can access a specific element through square brackets - ex first element console.log(logEntries[0]).
+
+
+CREATING objects
+
+- objects are created as key-value pairs
+    -   const logEntry = {
+    operation: "Add",
+    prevResult: initialResult,
+    numberAdded: enteredNumber,
+    newResult: currentResult,
+  };  
+  - logEntry is created
+  - operation: "add" because it's in the add function
+
+  - accessing object data
+        - console.log(logEntry.operation); - dot notation.
+
+
+ADD A RESUSABLE FUNCTION THAT USES OBJS 
+
+- create function
+    - function writeToLog(operationID, prevResult, operationNumUsed, newResult) {
+  const logEntry = {
+    operation: operationID,
+    prevResult: prevResult,
+    numberAdded: operationNumUsed,
+    newResult: newResult,
+  };
+  logEntries.push(logEntry);
+  console.log(logEntries);
+}
+
+
+UNDEFINED, NULL AND NaN 
+
+- undefined - Default value of uninitialized variables. You shouldn't assign undefined as a value manually.
+- null - never assumed by default. You can assign this a value if you want to "reset/clear" a variable.
+- NaN - not a number - Technically it's a type number and can therefore be used in calculations. 
+    - Yields a new NaN and it's the result of invalid calculations, (eg 3 * "hi")
+
+-undefined is a special type and the default value for undefined variables, null is actually of type object and never a default value of anything.
+
+typeof operator
+- lets you evaluate the type of variable at runtime
+
+
+IMPORTING SCRIPTS CORRECTLY WITH "DEFER" AND "ASYNC"
+
+- How to download the scripts, not execute them, earlier. 
+    - load the scripts after the html is parsed.
+            - move script to head section.
+            - add defer keyword. Starts downloading early, but doesn't execute scripts right away.
+
+    - async loads the scripts as early as possible, then executes right away once it is downloaded (ASAP).
+        - parsing of html is paused until scripts are executed.
+        - order of script execution is not guaranteed. Whichever is DL'ed first is executed first.
+    
+    - ONLY AVAILABLE WITH AN EXTERNAL SCRIPT
+
